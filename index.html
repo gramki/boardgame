@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Catan</title>
+        <script src="src/js/lib/dojo-release-1.6.0/dojo/dojo.js" type="text/javascript" djConfig="isDebug:false,modulePaths:{board: '../../../board'}">
+        </script>
+        <script>
+            dojo.require("board.Board");
+            dojo.require("dojox.gfx");
+        </script>
+    </head>
+    <body>
+        <h1>New Web Project Page</h1>
+        <div id="board" style="height: 800px; width: 800px;">
+        </div>
+        <script>
+            var b = new board.Board();
+            var surface = dojox.gfx.createSurface('board', 800, 800);
+            var root3 = 1.732, r = 100;
+            function allSideCoordinates(r){
+                var sides = [{
+                    x: r / 2,
+                    y: 0
+                }, {
+                    x: 3 / 2 * r,
+                    y: 0
+                }, {
+                    x: 2 * r,
+                    y: root3 / 2 * r
+                }, {
+                    x: 3 / 2 * r,
+                    y: root3 * r
+                }, {
+                    x: r / 2,
+                    y: root3 * r
+                }, {
+                    x: 0,
+                    y: root3 / 2 * r
+                }, {
+                    x: r / 2,
+                    y: 0
+                }];
+                return sides;
+            }
+            
+            function Hexagon(surface, r){
+                var hex = surface.createPolyline(allSideCoordinates(r));
+                hex.setStroke({
+                    color: 'blue',
+                    width: 2
+                });
+                return hex;
+            }
+            
+            var hex = [];
+            var coords;
+            for (var i = 0; i < 19; i++) {
+                hex[i] = Hexagon(surface, r);
+                coords = cellCoordinates(i);
+                hex[i].applyTransform(dojox.gfx.matrix.translate(coords.x, coords.y));
+            }
+            function Road(surface, r, cellId, side){
+                var s = board.Cell.SIDE;
+                var points = allSideCoordinates(r);
+                var start = points[side];
+                var end = points[side + 1];
+                var line = surface.createLine({
+                    x1: start.x,
+                    y1: start.y,
+                    x2: end.x,
+                    y2: end.y
+                });
+                line.setStroke({
+                    color: 'yellow',
+                    width: 4
+                });
+                var move = cellCoordinates(cellId);
+                line.applyTransform(dojox.gfx.matrix.translate(move.x, move.y));
+                line.connect('mouseover', dojo.hitch(line, function(){
+                    this.setStroke({
+                        color: 'blue',
+                        width: 8
+                    });
+                }));
+                line.connect('mouseout', dojo.hitch(line, function(){
+                    this.setStroke({
+                        color: 'yellow',
+                        width: 4
+                    });
+                }));
+                return line;
+            }
+            
+            function cellCoordinates(cellId){
+                var start = [];
+                start[0] = {
+                    x: 0,
+                    y: root3 * r
+                };
+                start[1] = {
+                    x: 0,
+                    y: 2 * root3 * r
+                };
+                start[2] = {
+                    x: 0,
+                    y: 3 * root3 * r
+                };
+                start[3] = {
+                    x: 3 / 2 * r,
+                    y: root3 / 2 * r
+                };
+                start[4] = {
+                    x: 3 / 2 * r,
+                    y: 3 * root3 / 2 * r
+                };
+                start[5] = {
+                    x: 3 / 2 * r,
+                    y: 5 * root3 / 2 * r
+                };
+                start[6] = {
+                    x: 3 / 2 * r,
+                    y: 7 * root3 / 2 * r
+                };
+                start[7] = {
+                    x: 3 * r,
+                    y: 0
+                };
+                start[8] = {
+                    x: 3 * r,
+                    y: root3 * r
+                };
+                start[9] = {
+                    x: 3 * r,
+                    y: 2 * root3 * r
+                };
+                start[10] = {
+                    x: 3 * r,
+                    y: 3 * root3 * r
+                };
+                start[11] = {
+                    x: 3 * r,
+                    y: 4 * root3 * r
+                };
+                start[12] = {
+                    x: 9 / 2 * r,
+                    y: root3 / 2 * r
+                };
+                start[13] = {
+                    x: 9 / 2 * r,
+                    y: 3 * root3 / 2 * r
+                };
+                start[14] = {
+                    x: 9 / 2 * r,
+                    y: 5 * root3 / 2 * r
+                };
+                start[15] = {
+                    x: 9 / 2 * r,
+                    y: 7 * root3 / 2 * r
+                };
+                start[16] = {
+                    x: 6 * r,
+                    y: root3 * r
+                };
+                start[17] = {
+                    x: 6 * r,
+                    y: 2 * root3 * r
+                };
+                start[18] = {
+                    x: 6 * r,
+                    y: 3 * root3 * r
+                };
+                return start[cellId];
+            }
+            
+            var roads = [];
+            var sides = [0, 1, 2, 3, 4, 5];
+            dojo.forEach(b.cells, function(cell){
+                dojo.forEach(sides, function(side){
+                    path = cell.pathOnSide(side);
+                    if (!path.id) {
+                        path.id = roads.length;
+                        var road = Road(surface, r, cell.cellId, side);
+                        path.road = road;
+                        roads.push(road);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
