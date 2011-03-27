@@ -82,7 +82,7 @@ dojo.declare("board.Cell",[],{
         switch(side){
             case s.TOP:
                 cell.adjCells[s.BOTTOM] = this;
-                cell.paths[s.BOTTOM] = this.paths[s.TOP];
+                cell.paths[s.BOTTOM] = this.paths[s.TOP];                
                 cell.corners[2] = this.corners[0];
                 cell.corners[3] = this.corners[5];
                 cell.corners[2].setCornerCell(2, cell);

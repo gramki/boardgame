@@ -26,7 +26,7 @@ dojo.declare("board.Board", [], {
         c = this.cells = [];
         for (i = 0; i < 19; i++) {
             c[i] = new board.Cell(this);
-            c[i].cellId=i;
+            c[i].cellId = i;
         }
         s = c[0].SIDE;
         c[0].setCellOnSide(s.TOPRIGHT, c[3]);
@@ -95,15 +95,226 @@ dojo.declare("board.Board", [], {
         this._setPaths();
     },
     _setPaths: function(){
-        var sides=[0,1,2,3,4,5];
+        var sides = [0, 1, 2, 3, 4, 5];
         dojo.forEach(this.cells, function(cell){
             dojo.forEach(sides, function(side){
                 var path = cell.pathOnSide(side);
-                path.addAdjacent(cell.pathOnSide(side==0?5:side-1));
-                path.addAdjacent(cell.pathOnSide(side==5?0:side+1));
+                path.addAdjacent(cell.pathOnSide(side == 0 ? 5 : side - 1));
+                path.addAdjacent(cell.pathOnSide(side == 5 ? 0 : side + 1));
             });
         });
+        var boundaryPath = [{
+            cell: 0,
+            side: 0
+        }, {
+            cell: 3,
+            side: 5
+        }, {
+            cell: 3,
+            side: 0
+        }, {
+            cell: 7,
+            side: 5
+        }, {
+            cell: 7,
+            side: 0
+        }, {
+            cell: 7,
+            side: 1
+        }, {
+            cell: 12,
+            side: 0
+        }, {
+            cell: 12,
+            side: 1
+        }, {
+            cell: 16,
+            side: 0
+        }, {
+            cell: 16,
+            side: 1
+        }, {
+            cell: 16,
+            side: 2
+        }, {
+            cell: 17,
+            side: 1
+        }, {
+            cell: 17,
+            side: 2
+        }, {
+            cell: 18,
+            side: 1
+        }, {
+            cell: 18,
+            side: 2
+        }, {
+            cell: 18,
+            side: 3
+        }, {
+            cell: 15,
+            side: 2
+        }, {
+            cell: 15,
+            side: 3
+        }, {
+            cell: 11,
+            side: 2
+        }, {
+            cell: 11,
+            side: 3
+        }, {
+            cell: 11,
+            side: 4
+        }, {
+            cell: 6,
+            side: 3
+        }, {
+            cell: 6,
+            side: 4
+        }, {
+            cell: 2,
+            side: 3
+        }, {
+            cell: 2,
+            side: 4
+        }, {
+            cell: 2,
+            side: 5
+        }, {
+            cell: 1,
+            side: 4
+        }, {
+            cell: 1,
+            side: 5
+        }, {
+            cell: 0,
+            side: 4
+        }, {
+            cell: 0,
+            side: 5
+        }, {
+            cell: 0,
+            side: 0
+        }];
+        dojo.forEach(boundaryPath, function(segment, index){
+            var nextSegment = boundaryPath[index + 1];
+            if (!nextSegment) {
+                return;
+            }
+            segment = this.cells[segment.cell].pathOnSide(segment.side);
+            nextSegment = this.cells[nextSegment.cell].pathOnSide(nextSegment.side);
+            segment.addAdjacent(nextSegment);
+            nextSegment.addAdjacent(segment);
+        }, this);
+        
     },
+    cellCoordinates: function(cellId){
+        var start = [];
+        start[0] = {
+            x: 0,
+            y: root3 * r
+        };
+        start[1] = {
+            x: 0,
+            y: 2 * root3 * r
+        };
+        start[2] = {
+            x: 0,
+            y: 3 * root3 * r
+        };
+        start[3] = {
+            x: 3 / 2 * r,
+            y: root3 / 2 * r
+        };
+        start[4] = {
+            x: 3 / 2 * r,
+            y: 3 * root3 / 2 * r
+        };
+        start[5] = {
+            x: 3 / 2 * r,
+            y: 5 * root3 / 2 * r
+        };
+        start[6] = {
+            x: 3 / 2 * r,
+            y: 7 * root3 / 2 * r
+        };
+        start[7] = {
+            x: 3 * r,
+            y: 0
+        };
+        start[8] = {
+            x: 3 * r,
+            y: root3 * r
+        };
+        start[9] = {
+            x: 3 * r,
+            y: 2 * root3 * r
+        };
+        start[10] = {
+            x: 3 * r,
+            y: 3 * root3 * r
+        };
+        start[11] = {
+            x: 3 * r,
+            y: 4 * root3 * r
+        };
+        start[12] = {
+            x: 9 / 2 * r,
+            y: root3 / 2 * r
+        };
+        start[13] = {
+            x: 9 / 2 * r,
+            y: 3 * root3 / 2 * r
+        };
+        start[14] = {
+            x: 9 / 2 * r,
+            y: 5 * root3 / 2 * r
+        };
+        start[15] = {
+            x: 9 / 2 * r,
+            y: 7 * root3 / 2 * r
+        };
+        start[16] = {
+            x: 6 * r,
+            y: root3 * r
+        };
+        start[17] = {
+            x: 6 * r,
+            y: 2 * root3 * r
+        };
+        start[18] = {
+            x: 6 * r,
+            y: 3 * root3 * r
+        };
+        return start[cellId];
+    },
+    allSideCoordinates: function(r){
+        var sides = [{
+            x: r / 2,
+            y: 0
+        }, {
+            x: 3 / 2 * r,
+            y: 0
+        }, {
+            x: 2 * r,
+            y: root3 / 2 * r
+        }, {
+            x: 3 / 2 * r,
+            y: root3 * r
+        }, {
+            x: r / 2,
+            y: root3 * r
+        }, {
+            x: 0,
+            y: root3 / 2 * r
+        }, {
+            x: r / 2,
+            y: 0
+        }];
+        return sides;
+    },
+    
     /*
      *               C7
      *            C3     C12
