@@ -1,8 +1,8 @@
 /**
  * @author ramki.g
  */
-dojo.provide("board.Path");
-dojo.declare("board.Path", [], {
+dojo.provide("game.model.Path");
+dojo.declare("game.model.Path", [], {
     constructor: function(){
         this.adjPaths=[];
     },

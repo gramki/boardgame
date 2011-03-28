@@ -2,9 +2,9 @@
  * @author ramki.g
  */
 
-dojo.provide("board.Cell");
-dojo.require("board.Intersection");
-dojo.require("board.Path");
+dojo.provide("game.model.Cell");
+dojo.require("game.model.Intersection");
+dojo.require("game.model.Path");
 
 /*
  * 
@@ -19,7 +19,7 @@ dojo.require("board.Path");
  *                 3------- 2
  *                  BOTTOM
  */
-dojo.declare("board.Cell",[],{
+dojo.declare("game.model.Cell",[],{
     SIDE: {
         TOP: 0,
         TOPRIGHT: 1,
@@ -50,13 +50,13 @@ dojo.declare("board.Cell",[],{
     },
     _createPaths: function(){
         for(var i=0; i<6; i++){
-            var path = new board.Path();
+            var path = new game.model.Path();
             this.paths[i] = path;
         }
     },
     _createCorners: function(){
         for(var i=0; i<6; i++){
-            var intersection = new board.Intersection();
+            var intersection = new game.model.Intersection();
             this.corners[i] = intersection;
             intersection.setCornerCell(i, this);
         }
@@ -71,11 +71,11 @@ dojo.declare("board.Cell",[],{
         this.diceValue = value;
         return this;
     },
-    cellOnSide: function(/*board.Cell.SIDE*/ side){
+    cellOnSide: function(/*game.model.Cell.SIDE*/ side){
         var cell = this.adjCells[side];
         return cell?cell:this.INVALID_CELL;
     },
-    setCellOnSide: function(/*board.Cell.SIDE*/ side, /*board.Cell*/ cell){
+    setCellOnSide: function(/*game.model.Cell.SIDE*/ side, /*game.model.Cell*/ cell){
         this.adjCells[side] = cell;
         //Merge Paths
         var s = this.SIDE;
@@ -131,21 +131,21 @@ dojo.declare("board.Cell",[],{
         }
         return this;
     },
-    pathOnSide: function(/*board.Cell.SIDE*/ side){
+    pathOnSide: function(/*game.model.Cell.SIDE*/ side){
         return this.paths[side];
     },
-    setPathOnSide: function(/*board.Cell.SIDE*/ side, /*board.Path*/ path){
+    setPathOnSide: function(/*game.model.Cell.SIDE*/ side, /*game.model.Path*/ path){
         this.paths[side] = path;
         return this;
     },
     intersection: function(/* */corner){
         return this.corners[corner];
     },
-    setIntersection: function(/* */corner, /*board.Intersection*/ intersection){
+    setIntersection: function(/* */corner, /*game.model.Intersection*/ intersection){
         this.corners[corner] = intersection;
         return this;
     },
-    setResource: function(/*board.Cell.RESOURCE*/ resource){
+    setResource: function(/*game.model.Cell.RESOURCE*/ resource){
         this.resource = resource;
         return this;
     },
@@ -154,6 +154,6 @@ dojo.declare("board.Cell",[],{
         return this;
     }
 });
-board.Cell.prototype.INVALID_CELL = new board.Cell(null);
-board.Cell.SIDE = board.Cell.prototype.SIDE;
+game.model.Cell.prototype.INVALID_CELL = new game.model.Cell(null);
+game.model.Cell.SIDE = game.model.Cell.prototype.SIDE;
 

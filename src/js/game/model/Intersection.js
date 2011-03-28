@@ -2,9 +2,9 @@
  * @author ramki.g
  */
 
-dojo.provide("board.Intersection");
+dojo.provide("game.model.Intersection");
 
-dojo.declare("board.Intersection", [], {
+dojo.declare("game.model.Intersection", [], {
     constructor: function(){
         this.cells=[];
     },

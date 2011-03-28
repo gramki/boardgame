@@ -2,10 +2,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Catan</title>
-        <script src="src/js/lib/dojo-release-1.6.0/dojo/dojo.js" type="text/javascript" djConfig="isDebug:false,modulePaths:{board: '../../../board'}">
+        <script src="src/js/lib/dojo-release-1.6.0/dojo/dojo.js" type="text/javascript" djConfig="isDebug:false,modulePaths:{game: '../../../game'}">
         </script>
         <script>
-            dojo.require("board.Board");
+            dojo.require("game.model.Board");
+            dojo.require("game.view.BoardView");
             dojo.require("dojox.gfx");
         </script>
     </head>
@@ -14,98 +15,11 @@
         <div id="board" style="height: 800px; width: 800px;">
         </div>
         <script>
-            var b = new board.Board();
             var surface = dojox.gfx.createSurface('board', 800, 800);
-            var root3 = 1.732, r = 75;
-            
-            function Hexagon(surface, r){
-                var hex = surface.createPolyline(b.allSideCoordinates(r));
-                hex.setStroke({
-                    color: 'blue',
-                    width: 2
-                });
-                return hex;
-            }
-            
-            var hex = [];
-            var coords;
-            for (var i = 0; i < 19; i++) {
-                hex[i] = Hexagon(surface, r);
-                coords = b.cellCoordinates(i);
-                hex[i].applyTransform(dojox.gfx.matrix.translate(coords.x, coords.y));
-            }
-            function Road(surface, r, cellId, side){
-                var s = board.Cell.SIDE;
-                var points = b.allSideCoordinates(r);
-                var start = points[side];
-                var end = points[side + 1];
-                var line = surface.createLine({
-                    x1: start.x,
-                    y1: start.y,
-                    x2: end.x,
-                    y2: end.y
-                });
-                line.setStroke({
-                    color: 'yellow',
-                    width: 8
-                });
-                var move = b.cellCoordinates(cellId);
-                line.applyTransform(dojox.gfx.matrix.translate(move.x, move.y));
-                line.connect('mouseover', dojo.hitch(line, function(){
-                    this.setStroke({
-                        color: 'blue',
-                        width: 8
-                    });
-                    //temporary, remove adjacent highlighting later
-                    if(this.path){
-                        dojo.forEach(this.path.adjPaths, function(adj){
-                            adj.road.setStroke({
-                                color: 'red',
-                                width: 8
-                            });                            
-                        });
-                    };
-                }));
-                line.connect('mouseout', dojo.hitch(line, function(){
-                    this.setStroke({
-                        color: 'yellow',
-                        width: 8
-                    });
-                    if(this.path){
-                        dojo.forEach(this.path.adjPaths, function(adj){
-                            adj.road.setStroke({
-                                color: 'yellow',
-                                width: 8
-                            });                            
-                        });
-                    };
-                }));
-                return line;
-            }
-            
-            
-            var roads = [];
-            var sides = [0, 1, 2, 3, 4, 5];
-            dojo.forEach(b.cells, function(cell){
-                dojo.forEach(sides, function(side){
-                    path = cell.pathOnSide(side);
-                    if (!path.id) {
-                        path.id = roads.length;
-                        var road = Road(surface, r, cell.cellId, side);
-                        path.road = road;
-                        road.path = path;
-                        roads.push(road);
-                    }
-                });
-            });
-            var g = surface.createGroup();
-            dojo.forEach(hex, function(hex){
-                g.add(hex);
-            });
-            dojo.forEach(roads, function(road){
-                g.add(road);
-            });
-            g.applyTransform(dojox.gfx.matrix.translate(0, 10));
+            var r = 75;
+            var b = new game.model.Board();
+            var bv = new game.view.BoardView(b, surface, r);
+            bv.draw();
         </script>
     </body>
 </html>
